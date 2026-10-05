@@ -1,0 +1,14 @@
+{
+  "name": "surprise-me",
+  "description": "The surprise-me skill: max visual acuity mode for Claude Code.",
+  "owner": {
+    "name": "Linhua Zhou"
+  },
+  "plugins": [
+    {
+      "name": "surprise-me",
+      "source": "./",
+      "description": "Max visual acuity mode: dice-rolled creative direction, a locked design contract, real assets, and 3+ screenshot-critique passes before anything is shown."
+    }
+  ]
+}

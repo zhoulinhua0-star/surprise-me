@@ -9,26 +9,52 @@ Asking a model to "be creative" changes the wording, not the concept — it pick
 3. **Real assets** — generated/sourced images and motion, not CSS-gradient placeholders.
 4. **3+ visual critique passes** — render → screenshot → audit against the contract → fix. Nothing is shown before pass 3.
 
-See [`SKILL.md`](SKILL.md) for the full workflow.
+See [`SKILL.md`](skills/surprise-me/SKILL.md) for the full workflow.
 
 ## Install
 
-Clone once, then symlink into each agent's skills folder:
+### Claude Code — as a plugin (recommended)
+
+Inside Claude Code:
+
+```
+/plugin marketplace add zhoulinhua0-star/surprise-me
+/plugin install surprise-me@surprise-me
+```
+
+Update later with `/plugin marketplace update surprise-me`.
+
+### Any agent — as a plain skill
+
+Clone once, then symlink the skill folder into each agent's skills directory:
 
 ```bash
 git clone git@github.com:zhoulinhua0-star/surprise-me.git ~/Developer/surprise-me
 
-# Claude Code
-ln -s ~/Developer/surprise-me ~/.claude/skills/surprise-me
+# Claude Code (skip if you installed the plugin)
+ln -s ~/Developer/surprise-me/skills/surprise-me ~/.claude/skills/surprise-me
 
 # Codex
-ln -s ~/Developer/surprise-me ~/.codex/skills/surprise-me
+ln -s ~/Developer/surprise-me/skills/surprise-me ~/.codex/skills/surprise-me
 
 # Other agents that read ~/.agents/skills
-ln -s ~/Developer/surprise-me ~/.agents/skills/surprise-me
+ln -s ~/Developer/surprise-me/skills/surprise-me ~/.agents/skills/surprise-me
 ```
 
 Restart the agent so it picks up the new skill. `git pull` updates it everywhere.
+
+> Use one method per agent. If Claude Code has both the plugin and the symlink, the skill shows up twice (`surprise-me` and `surprise-me:surprise-me`) — remove the symlink with `rm ~/.claude/skills/surprise-me`.
+
+## Repo layout
+
+```
+.claude-plugin/
+  plugin.json            # plugin manifest
+  marketplace.json       # lets this repo act as its own plugin marketplace
+skills/surprise-me/
+  SKILL.md               # the skill itself (canonical copy)
+SKILL.md -> skills/surprise-me/SKILL.md   # symlink for agents that read the repo root
+```
 
 ## Use
 
