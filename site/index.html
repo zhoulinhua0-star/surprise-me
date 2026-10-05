@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surprise Me — the house rolls the dice</title>
+<meta name="description" content="surprise-me: a skill for coding agents. A real die picks the creative direction, a contract locks it, and three visual critique passes polish it before you see anything.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#052117">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Surprise Me — the house rolls the dice">
+<meta property="og:description" content="A skill for coding agents: a real die picks the creative direction, a contract locks it, and three visual critique passes polish it before you see anything.">
+<meta property="og:url" content="https://zhoulinhua0-star.github.io/surprise-me/">
+<meta property="og:image" content="https://zhoulinhua0-star.github.io/surprise-me/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zhoulinhua0-star.github.io/surprise-me/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --felt:#0E4D3A; --felt-deep:#052117; --gold:#D4A73C; --foil:#F7E6A6;
+  --crimson:#B3202A; --ivory:#F3ECDC; --ink:#0B0F0D;
+  --display:"Limelight", "Cormorant Garamond", serif;
+  --serif:"Cormorant Garamond", Georgia, serif;
+  --mono:"JetBrains Mono", ui-monospace, monospace;
+  --gutter:clamp(16px,5vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--felt) var(--felt-img,none) repeat;
+  background-size:420px;
+  color:var(--ivory); font-family:var(--serif); font-size:clamp(19px,1.35vw,23px); line-height:1.45;
+  overflow-x:hidden;
+}
+body::before{ /* lamp vignette over the whole table */
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:radial-gradient(120% 90% at 50% 35%, transparent 35%, rgba(5,33,23,.75) 100%);
+}
+main,footer{position:relative; z-index:1}
+a{color:var(--foil)}
+.mono{font-family:var(--mono); font-size:.72em; letter-spacing:.14em; text-transform:uppercase}
+
+/* gold foil type */
+.foil{
+  font-family:var(--display); font-weight:400; line-height:.86;
+  background:linear-gradient(170deg,#8a6420 0%,var(--gold) 28%,var(--foil) 46%,var(--gold) 60%,#7a5518 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:url(#foil) drop-shadow(0 6px 18px rgba(0,0,0,.55));
+}
+
+/* ---------- HERO ---------- */
+.hero{position:relative; min-height:100svh; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); align-items:center; padding:var(--gutter)}
+#table{position:absolute; inset:0; width:100%; height:100%; display:block}
+.hero::after{content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(90deg, rgba(3,20,14,.88) 0%, rgba(3,20,14,.6) 30%, rgba(3,20,14,0) 52%)}
+.hero-copy{position:relative; z-index:2; max-width:760px; pointer-events:none}
+.hero-copy .actions{pointer-events:auto}
+.hero .eyebrow{color:var(--gold); margin-bottom:2.2rem; display:flex; gap:.9rem; align-items:center}
+.hero .eyebrow::before{content:""; width:48px; height:1px; background:var(--gold)}
+.hero h1{font-size:clamp(76px,12vw,200px); letter-spacing:-.01em; width:max-content}
+.hero h1 span{display:block}
+.hero h1 span:last-child{padding-left:.55em}
+.lede{font-style:italic; font-size:clamp(22px,1.9vw,30px); max-width:30ch; margin:2rem 0 2.4rem; color:#efe6cf}
+.lede b{font-style:normal; font-weight:600; color:var(--foil)}
+.actions{display:flex; flex-wrap:wrap; gap:1rem; align-items:center}
+.btn-throw{
+  font-family:var(--mono); font-size:14px; letter-spacing:.16em; text-transform:uppercase; font-weight:600;
+  color:var(--ivory); background:var(--crimson); border:0; cursor:pointer;
+  padding:1.05rem 1.6rem; border-radius:999px;
+  box-shadow:0 0 0 3px var(--crimson), 0 0 0 5px var(--ivory), 0 0 0 7px var(--crimson), 0 14px 30px rgba(0,0,0,.45);
+  transition:transform .2s ease;
+}
+.btn-throw:hover{transform:translateY(-2px) rotate(-2deg)}
+.btn-throw:active{transform:scale(.97)}
+.btn-sound{font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); background:none; border:0; border-bottom:1px solid rgba(212,167,60,.5); padding:.4rem .1rem; cursor:pointer}
+.btn-sound{display:inline-flex; align-items:center; gap:.55rem}
+.btn-sound[aria-pressed="false"]{color:#7d8f86; border-color:rgba(125,143,134,.4)}
+.btn-sound .eq{display:inline-flex; align-items:flex-end; gap:2px; height:12px}
+.btn-sound .eq i{width:2px; height:3px; background:currentColor; border-radius:1px}
+.btn-sound.live .eq i{animation:eq .9s ease-in-out infinite}
+.btn-sound.live .eq i:nth-child(2){animation-delay:-.3s}.btn-sound.live .eq i:nth-child(3){animation-delay:-.6s}.btn-sound.live .eq i:nth-child(4){animation-delay:-.15s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+.btn-sound.locked{animation:breathe 2.2s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.55}50%{opacity:1; text-shadow:0 0 14px rgba(247,230,166,.7)}}
+.hint{margin-top:1.1rem; color:rgba(212,167,60,.7); font-size:11px}
+.btn-throw.shaking{animation:shake .09s linear infinite; background:#c8262f}
+@keyframes shake{0%{transform:translate(1px,-1px) rotate(-1.5deg)}50%{transform:translate(-1px,1px) rotate(1.5deg)}100%{transform:translate(1px,-1px) rotate(-1.5deg)}}
+.cmd{font-family:var(--mono); font-size:13px; color:var(--foil); border:1px dashed rgba(212,167,60,.6); padding:.85rem 1rem; border-radius:6px; background:rgba(5,33,23,.55); cursor:copy}
+.readout{
+  position:absolute; z-index:2; right:var(--gutter); bottom:var(--gutter); text-align:right;
+  opacity:0; transform:translateY(12px); transition:opacity .6s ease, transform .6s ease;
+}
+.readout.on{opacity:1; transform:none}
+.readout .num{font-size:clamp(70px,8vw,130px); display:block}
+.readout .pair{display:block; margin-top:.8rem; color:#9fb8ab; font-size:11px}
+.readout .what{font-style:italic; font-size:clamp(18px,1.4vw,24px); max-width:26ch; margin-left:auto; color:#efe6cf}
+
+/* ---------- SECTIONS ---------- */
+section.block{padding:clamp(64px,8vw,130px) var(--gutter); position:relative}
+.sec-head{display:grid; grid-template-columns:auto 1fr; gap:clamp(18px,3vw,48px); align-items:center; margin-bottom:clamp(40px,6vw,90px); max-width:1300px}
+.sec-head .n{display:block; width:clamp(72px,8vw,118px); aspect-ratio:1; transform:rotate(-8deg); filter:drop-shadow(0 14px 18px rgba(0,0,0,.5))}
+.sec-head .n svg{width:100%; height:100%; display:block}
+.sec-head:nth-of-type(odd) .n{transform:rotate(7deg)}
+.sec-head h2{font-family:var(--display); font-weight:400; font-size:clamp(36px,4.6vw,76px); line-height:1; color:var(--ivory)}
+.sec-head p{grid-column:2; font-style:italic; max-width:52ch; color:#e6dcc3; margin-top:.2rem; font-size:clamp(20px,1.5vw,25px)}
+
+/* the craps table */
+.table-wrap{max-width:1300px; margin:0 auto; position:relative}
+.passline{width:100%; height:auto; display:block; overflow:visible}
+.passline text{font-family:var(--display); fill:var(--gold); font-size:30px; letter-spacing:6px}
+.boxes{display:grid; grid-template-columns:repeat(3,1fr); border:2px solid var(--gold); border-radius:0 0 140px 140px; overflow:hidden; margin-top:-6px}
+.box{position:relative; padding:clamp(22px,2.6vw,40px); border-right:2px solid var(--gold); border-bottom:2px solid var(--gold); min-height:260px; transition:background .6s ease}
+.box:nth-child(3n){border-right:0}
+.box:nth-child(n+4){border-bottom:0}
+.box .pip{font-family:var(--display); font-size:64px; color:var(--gold); line-height:1}
+.box h3{font-family:var(--serif); font-weight:600; font-size:clamp(22px,1.8vw,28px); margin:.6rem 0 .3rem; color:var(--ivory)}
+.box p{font-style:italic; font-size:.92em; color:#d9cfb5}
+.box .chip-mark{position:absolute; top:22px; right:22px; width:58px; height:58px; opacity:0; transform:translateY(-30px) rotate(-90deg) scale(1.3); transition:all .7s cubic-bezier(.2,1.4,.4,1)}
+.box.hit{background:rgba(212,167,60,.14)}
+.box.hit .chip-mark{opacity:1; transform:none}
+.box.hit .pip{color:var(--foil); text-shadow:0 0 24px rgba(247,230,166,.6)}
+.table-note{text-align:center; margin-top:2rem; color:var(--gold)}
+
+/* house rules: chips */
+.rules{display:grid; gap:clamp(28px,4vw,56px); max-width:1100px}
+.rule{display:grid; grid-template-columns:120px 1fr; gap:clamp(18px,3vw,44px); align-items:center}
+.rule:nth-child(even){margin-left:clamp(0px,8vw,140px)}
+.chip{width:120px; height:120px; transform:rotate(calc(var(--spin,0) * 1deg)); filter:drop-shadow(0 10px 14px rgba(0,0,0,.5))}
+.rule h3{font-family:var(--display); font-weight:400; font-size:clamp(26px,2.4vw,40px); color:var(--foil); line-height:1.05}
+.rule p{color:#e2d8bf; max-width:58ch; margin-top:.4rem}
+
+/* the marker slip */
+.marker{
+  max-width:780px; margin:0 auto; background:var(--ivory); color:var(--ink); font-family:var(--mono); font-size:14px; line-height:1.65;
+  padding:48px clamp(22px,5vw,60px) 56px; position:relative; transform:rotate(-1.2deg);
+  box-shadow:0 30px 60px rgba(0,0,0,.5);
+  -webkit-mask:radial-gradient(circle at 8px 0, transparent 6px, #000 6.5px) 0 0/16px 100% repeat-x top, linear-gradient(#000,#000);
+}
+.marker h4{font-family:var(--display); font-weight:400; font-size:30px; letter-spacing:.04em; border-bottom:2px solid var(--ink); padding-bottom:.6rem; margin-bottom:1.2rem}
+.marker dl{display:grid; grid-template-columns:150px 1fr; gap:.55rem 1.2rem}
+.marker dt{text-transform:uppercase; letter-spacing:.12em; color:#6b5a3a}
+.marker .sw{display:inline-block; width:14px; height:14px; vertical-align:-2px; margin-right:4px; border:1px solid rgba(0,0,0,.3)}
+.stamp{position:absolute; right:26px; top:30px; font-family:var(--display); font-size:44px; color:var(--crimson); border:4px solid var(--crimson); padding:.1em .4em; transform:rotate(-14deg); opacity:.82; letter-spacing:.06em}
+
+/* three passes: cards */
+.cards{display:flex; justify-content:center; gap:clamp(16px,3vw,44px); perspective:1400px; flex-wrap:wrap}
+.card{width:clamp(240px,24vw,320px); aspect-ratio:5/7; position:relative; transform-style:preserve-3d; transition:transform 1s cubic-bezier(.3,1.3,.5,1)}
+.card:nth-child(1){transform:rotateY(180deg) rotate(-5deg)}
+.card:nth-child(2){transform:rotateY(180deg) translateY(-18px)}
+.card:nth-child(3){transform:rotateY(180deg) rotate(5deg)}
+.cards.in .card:nth-child(1){transform:rotate(-5deg); transition-delay:.0s}
+.cards.in .card:nth-child(2){transform:translateY(-18px); transition-delay:.25s}
+.cards.in .card:nth-child(3){transform:rotate(5deg); transition-delay:.5s}
+.face,.back{position:absolute; inset:0; border-radius:16px; backface-visibility:hidden; -webkit-backface-visibility:hidden; box-shadow:0 20px 40px rgba(0,0,0,.45)}
+.back{transform:rotateY(180deg); background:var(--crimson); border:10px solid var(--ivory);
+  background-image:repeating-linear-gradient(45deg,rgba(243,236,220,.18) 0 2px,transparent 2px 12px),repeating-linear-gradient(-45deg,rgba(243,236,220,.18) 0 2px,transparent 2px 12px)}
+.face{background:var(--ivory); color:var(--ink); padding:22px; display:flex; flex-direction:column}
+.face .idx{font-family:var(--display); font-size:34px; color:var(--crimson); line-height:1}
+.face .idx svg{width:22px; height:22px; display:block; margin-top:4px}
+.face .mid{flex:1; display:flex; flex-direction:column; justify-content:center; text-align:center}
+.face .mid strong{font-family:var(--display); font-weight:400; font-size:34px; line-height:1.05}
+.face .mid em{font-size:19px; margin-top:.6rem; color:#3b3428}
+.face .idx.r{align-self:flex-end; transform:rotate(180deg)}
+
+/* cash in */
+.cash{display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,3vw,40px); max-width:1200px}
+.tray{border:2px solid var(--gold); border-radius:18px; padding:clamp(22px,3vw,40px); background:rgba(5,33,23,.55)}
+.tray h3{font-family:var(--display); font-weight:400; font-size:30px; color:var(--foil); margin-bottom:.3rem}
+.tray p{font-style:italic; color:#d9cfb5; margin-bottom:1.2rem}
+.tray pre{font-family:var(--mono); font-size:13px; line-height:1.7; color:var(--ivory); white-space:pre-wrap; word-break:break-word; background:rgba(0,0,0,.35); padding:1rem 1.1rem; border-radius:8px; border-left:3px solid var(--crimson)}
+.tray pre .c{color:#8fae9e}
+
+footer{padding:60px var(--gutter) 80px; border-top:1px solid rgba(212,167,60,.35); display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; color:#cbbf9f; font-size:.9em}
+footer .mono{color:var(--gold)}
+
+/* reveal */
+.rv{opacity:0; transform:translateY(40px); transition:opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1; transform:none}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr; align-items:end; padding-top:56svh}
+  .stamp{font-size:30px; top:auto; bottom:18px}
+  .hero h1 span:last-child{padding-left:.3em}
+  .hero::after{background:linear-gradient(0deg, rgba(3,20,14,.92) 0%, rgba(3,20,14,.75) 38%, rgba(3,20,14,0) 52%)}
+  .readout{top:calc(var(--gutter) + 8px); bottom:auto}
+  .boxes{grid-template-columns:1fr 1fr; border-radius:0 0 60px 60px}
+  .box{border-right:2px solid var(--gold)!important; border-bottom:2px solid var(--gold)!important; min-height:0}
+  .box:nth-child(2n){border-right:0!important}
+  .box:nth-child(n+5){border-bottom:0!important}
+  .sec-head{grid-template-columns:1fr}
+  .sec-head p{grid-column:1}
+  .rule{grid-template-columns:72px 1fr}
+  .chip{width:72px; height:72px}
+  .marker h4{font-size:22px}
+  .marker dl{grid-template-columns:1fr; gap:.1rem}
+  .marker dd{margin-bottom:.6rem}
+  .cash{grid-template-columns:1fr}
+  .cards{gap:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv,.card,.box .chip-mark,.readout{transition:none!important}
+  .btn-sound .eq i,.btn-sound.locked,.btn-throw.shaking{animation:none!important}
+  .rv{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- gold foil filter: specular light follows the pointer -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="foil" x="-8%" y="-15%" width="120%" height="135%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
+    <feSpecularLighting in="b" surfaceScale="5" specularConstant="1.1" specularExponent="22" lighting-color="#fff6d6" result="s">
+      <fePointLight id="foilLight" x="300" y="-200" z="260"/>
+    </feSpecularLighting>
+    <feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/>
+    <feComposite in="SourceGraphic" in2="s2" operator="arithmetic" k1="0" k2="1" k3="0.9" k4="0"/>
+  </filter>
+  <symbol id="chip" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="48" fill="currentColor"/>
+    <circle cx="50" cy="50" r="48" fill="none" stroke="#F3ECDC" stroke-width="9" stroke-dasharray="13.6 11.5"/>
+    <circle cx="50" cy="50" r="34" fill="none" stroke="#F3ECDC" stroke-width="1.5" stroke-dasharray="2 3"/>
+    <circle cx="50" cy="50" r="27" fill="#F3ECDC"/>
+  </symbol>
+  <symbol id="spade" viewBox="0 0 24 24"><path d="M12 2C9 7 3 9.5 3 14a4.5 4.5 0 0 0 8 2.8L9.5 22h5L13 16.8A4.5 4.5 0 0 0 21 14c0-4.5-6-7-9-12z" fill="currentColor"/></symbol>
+  <symbol id="diamond" viewBox="0 0 24 24"><path d="M12 1 21 12 12 23 3 12z" fill="currentColor"/></symbol>
+  <symbol id="club" viewBox="0 0 24 24"><circle cx="12" cy="6.5" r="4.5" fill="currentColor"/><circle cx="6.5" cy="13" r="4.5" fill="currentColor"/><circle cx="17.5" cy="13" r="4.5" fill="currentColor"/><path d="M11 12h2l1.5 10h-5z" fill="currentColor"/></symbol>
+</svg>
+
+<main>
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <canvas id="table" aria-hidden="true"></canvas>
+    <div class="hero-copy">
+      <p class="eyebrow mono">A skill for coding agents</p>
+      <h1 class="foil"><span>Surprise</span><span>Me</span></h1>
+      <p class="lede">Ask a model to “be creative” and it picks the same favourite every time. So we stopped asking. <b>We roll the dice.</b></p>
+      <div class="actions">
+        <button class="btn-throw" id="throw">Throw the dice</button>
+        <button class="btn-sound locked" id="sound" aria-pressed="true"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">Tap for sound</span></button>
+        <span class="cmd" data-copy="/plugin install surprise-me@surprise-me" title="Click to copy">/plugin install surprise-me@surprise-me</span>
+      </div>
+      <p class="hint mono" id="hint">Hold the button to shake them first</p>
+    </div>
+    <div class="readout" id="readout" aria-live="polite">
+      <span class="mono" style="color:var(--gold)">The house calls</span>
+      <span class="num foil" id="rnum">1</span>
+      <span class="what" id="rwhat"></span>
+      <span class="mono pair" id="rpair"></span>
+    </div>
+  </header>
+
+  <!-- THE TABLE -->
+  <section class="block" id="table-sec">
+    <div class="sec-head rv">
+      <span class="n" data-die="1" role="img" aria-label="Section 1"></span>
+      <h2>Six bets on the felt</h2>
+      <p>Step two: the agent writes six fundamentally different directions. Step three: a real random number picks one. These are the six it wrote for this very page — throw the die and watch where it lands.</p>
+    </div>
+    <div class="table-wrap rv">
+      <svg class="passline" viewBox="0 0 1300 120" aria-hidden="true">
+        <path id="arc" d="M40 110 Q650 -20 1260 110" fill="none" stroke="#D4A73C" stroke-width="2"/>
+        <text><textPath href="#arc" startOffset="50%" text-anchor="middle">PASS LINE · NO FAVOURITES · NO RE-ROLLS</textPath></text>
+      </svg>
+      <div class="boxes" id="boxes">
+        <div class="box" data-n="1"><svg class="chip-mark" style="color:var(--crimson)"><use href="#chip"/></svg><div class="pip">1</div><h3>Las Vegas, 1974</h3><p>Green felt, gold foil, a real 3D die tumbling under a lamp.</p></div>
+        <div class="box" data-n="2"><svg class="chip-mark" style="color:var(--crimson)"><use href="#chip"/></svg><div class="pip">2</div><h3>Swiss poster</h3><p>Red, black and paper. A strict grid that re-flows as you scroll.</p></div>
+        <div class="box" data-n="3"><svg class="chip-mark" style="color:var(--crimson)"><use href="#chip"/></svg><div class="pip">3</div><h3>The darkroom</h3><p>Red safelight. Prints develop in a shader bath as they enter view.</p></div>
+        <div class="box" data-n="4"><svg class="chip-mark" style="color:var(--crimson)"><use href="#chip"/></svg><div class="pip">4</div><h3>Abyssal glow</h3><p>Bioluminescent particles swarm and scatter around the cursor.</p></div>
+        <div class="box" data-n="5"><svg class="chip-mark" style="color:var(--crimson)"><use href="#chip"/></svg><div class="pip">5</div><h3>Illuminated tarot</h3><p>Vellum and gold leaf; six fate cards turn over one by one.</p></div>
+        <div class="box" data-n="6"><svg class="chip-mark" style="color:var(--crimson)"><use href="#chip"/></svg><div class="pip">6</div><h3>Riso zine, 1993</h3><p>Two-colour misregistration, halftone dots, cut-and-paste layout.</p></div>
+      </div>
+      <p class="table-note mono">This page rolled a 1. Two dice hit the felt — the crimson one decides. On a real run there are no re-rolls.</p>
+    </div>
+  </section>
+
+  <!-- HOUSE RULES -->
+  <section class="block" id="rules">
+    <div class="sec-head rv">
+      <span class="n" data-die="2" role="img" aria-label="Section 2"></span>
+      <h2>House rules</h2>
+      <p>Five mechanics, run every time. None of them is “try harder.”</p>
+    </div>
+    <div class="rules">
+      <div class="rule rv"><svg class="chip" style="color:#B3202A"><use href="#chip"/></svg><div><h3>Ambition, stated up front</h3><p>The brief isn’t “make a page.” It’s demonstrate extreme capability, taste and artistic flavour. Every choice aims at showcase, not adequate.</p></div></div>
+      <div class="rule rv"><svg class="chip" style="color:#1E5AA8"><use href="#chip"/></svg><div><h3>A mixture, never a gimmick</h3><p>At least three advanced techniques per build — 3D, shaders, scroll choreography, novel type, unusual layout — each earning its place in one concept.</p></div></div>
+      <div class="rule rv"><svg class="chip" style="color:#111"><use href="#chip"/></svg><div><h3>Real assets</h3><p>Generated images, animated stills, procedural art. Never a CSS gradient pretending to be a photo.</p></div></div>
+      <div class="rule rv"><svg class="chip" style="color:#5B2A86"><use href="#chip"/></svg><div><h3>The dice pick the lane</h3><p>Your house style is off the table. Six candidates, one <code class="mono">$RANDOM</code>, and the roll stands.</p></div></div>
+      <div class="rule rv"><svg class="chip" style="color:#C77A1B"><use href="#chip"/></svg><div><h3>Iteration you can see</h3><p>Nothing ships on pass one. Three rounds of screenshot, audit, fix — eyes on pixels, not code.</p></div></div>
+    </div>
+  </section>
+
+  <!-- THE MARKER -->
+  <section class="block" id="contract">
+    <div class="sec-head rv">
+      <span class="n" data-die="3" role="img" aria-label="Section 3"></span>
+      <h2>Sign the marker</h2>
+      <p>Before a line of code, the roll is locked into a contract. Every critique pass is scored against it. This is the one behind the page you’re reading.</p>
+    </div>
+    <div class="marker rv">
+      <h4>surprise-contract.md</h4>
+      <dl>
+        <dt>Roll</dt><dd>1 of 6 — Las Vegas, 1974</dd>
+        <dt>Concept</dt><dd>The page is the table. First three seconds: “oh — it actually rolls.”</dd>
+        <dt>Palette</dt><dd><span class="sw" style="background:#0E4D3A"></span>felt <span class="sw" style="background:#D4A73C"></span>gold <span class="sw" style="background:#F7E6A6"></span>foil <span class="sw" style="background:#B3202A"></span>crimson <span class="sw" style="background:#F3ECDC"></span>ivory</dd>
+        <dt>Type</dt><dd>Limelight / Cormorant Garamond / JetBrains Mono</dd>
+        <dt>Techniques</dt><dd>WebGL dice · cannon-es physics · synthesized sound · procedural felt · specular foil type · scroll-flipped cards</dd>
+        <dt>Hero moment</dt><dd>The die lands; its bet lights up on the felt.</dd>
+        <dt>Bans</dt><dd>No gradient hero card. No system fonts. No emoji. No feature grid.</dd>
+      </dl>
+      <div class="stamp">LOCKED</div>
+    </div>
+  </section>
+
+  <!-- THREE PASSES -->
+  <section class="block" id="passes">
+    <div class="sec-head rv">
+      <span class="n" data-die="4" role="img" aria-label="Section 4"></span>
+      <h2>Three passes before the house shows its hand</h2>
+      <p>Render. Screenshot. Score every line of the contract. Fix the three loudest problems. Repeat — and nothing is shown before the third card turns.</p>
+    </div>
+    <div class="cards" id="cards">
+      <div class="card"><div class="back"></div><div class="face"><div class="idx">I<svg style="color:var(--crimson)"><use href="#diamond"/></svg></div><div class="mid"><strong>Render</strong><em>Desktop and phone, mid-scroll and mid-motion.</em></div><div class="idx r">I<svg style="color:var(--crimson)"><use href="#diamond"/></svg></div></div></div>
+      <div class="card"><div class="back"></div><div class="face"><div class="idx" style="color:var(--ink)">II<svg><use href="#spade"/></svg></div><div class="mid"><strong>Audit</strong><em>Would this stop someone scrolling? What looks generic?</em></div><div class="idx r" style="color:var(--ink)">II<svg><use href="#spade"/></svg></div></div></div>
+      <div class="card"><div class="back"></div><div class="face"><div class="idx" style="color:var(--ink)">III<svg><use href="#club"/></svg></div><div class="mid"><strong>Fix</strong><em>Top three problems, biggest visual impact first.</em></div><div class="idx r" style="color:var(--ink)">III<svg><use href="#club"/></svg></div></div></div>
+    </div>
+  </section>
+
+  <!-- CASH IN -->
+  <section class="block" id="install">
+    <div class="sec-head rv">
+      <span class="n" data-die="5" role="img" aria-label="Section 5"></span>
+      <h2>Cash in</h2>
+      <p>Works in Claude Code, Codex, and any agent that reads a SKILL.md. Best with a screenshot tool and an image model at the table.</p>
+    </div>
+    <div class="cash">
+      <div class="tray rv"><h3>As a plugin</h3><p>Claude Code, two commands.</p>
+<pre>/plugin marketplace add zhoulinhua0-star/surprise-me
+/plugin install surprise-me@surprise-me</pre></div>
+      <div class="tray rv"><h3>As a skill</h3><p>Any agent — clone once, symlink everywhere.</p>
+<pre>git clone git@github.com:zhoulinhua0-star/surprise-me.git
+ln -s ~/surprise-me/skills/surprise-me \
+      ~/.claude/skills/surprise-me</pre></div>
+    </div>
+    <div class="tray rv" style="max-width:1200px; margin-top:clamp(20px,3vw,40px)"><h3>Then call it</h3>
+<pre>/surprise-me
+/surprise-me a landing page for my CLI tool
+<span class="c"># or just say it</span>
+surprise me with a pitch deck for this project</pre></div>
+  </section>
+</main>
+
+<footer>
+  <span class="mono">surprise-me · MIT</span>
+  <span>Based on Jay E’s “surprise-me” skill and the <a href="https://impeccable.style/research">impeccable.style research</a>.</span>
+  <a class="mono" href="https://github.com/zhoulinhua0-star/surprise-me">GitHub →</a>
+</footer>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/","cannon-es":"https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import * as CANNON from 'cannon-es';
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DIRECTIONS = {
+  1:'Las Vegas, 1974 — green felt and a tumbling die.',
+  2:'Swiss poster — red, black, a grid that re-flows.',
+  3:'The darkroom — prints develop under safelight.',
+  4:'Abyssal glow — particles swarm the cursor.',
+  5:'Illuminated tarot — gold leaf and fate cards.',
+  6:'Riso zine, 1993 — misregistered two-colour print.'
+};
+
+/* ---------- procedural felt ---------- */
+function makeFelt(size=512){
+  const c=document.createElement('canvas'); c.width=c.height=size; const g=c.getContext('2d');
+  g.fillStyle='#0E4D3A'; g.fillRect(0,0,size,size);
+  const img=g.getImageData(0,0,size,size), d=img.data;
+  for(let i=0;i<d.length;i+=4){ const n=(Math.random()-.5)*22; d[i]+=n*.5; d[i+1]+=n; d[i+2]+=n*.8; }
+  g.putImageData(img,0,0);
+  for(let i=0;i<9000;i++){ // fibers
+    const x=Math.random()*size, y=Math.random()*size, a=Math.random()*Math.PI, l=2+Math.random()*6;
+    g.strokeStyle=Math.random()<.5?'rgba(120,200,160,.07)':'rgba(0,20,10,.12)';
+    g.lineWidth=.6; g.beginPath(); g.moveTo(x,y); g.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l); g.stroke();
+  }
+  return c;
+}
+const feltCanvas=makeFelt();
+document.body.style.setProperty('--felt-img',`url(${feltCanvas.toDataURL('image/jpeg',.85)})`);
+
+/* ---------- foil light follows pointer ---------- */
+const light=document.getElementById('foilLight');
+addEventListener('pointermove',e=>{ light.setAttribute('x',e.clientX); light.setAttribute('y',e.clientY-150); },{passive:true});
+
+/* ---------- three.js table ---------- */
+const canvas=document.getElementById('table');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth<820?1.5:2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.0;
+renderer.setClearColor(0x052117);
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0x03140e,10,20);
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
+scene.environmentIntensity=.35;
+
+const camera=new THREE.PerspectiveCamera(36,1,.1,100);
+
+const feltTex=new THREE.CanvasTexture(feltCanvas);
+feltTex.wrapS=feltTex.wrapT=THREE.RepeatWrapping; feltTex.repeat.set(10,10); feltTex.colorSpace=THREE.SRGBColorSpace;
+const felt=new THREE.Mesh(new THREE.PlaneGeometry(60,60), new THREE.MeshStandardMaterial({map:feltTex,roughness:1,metalness:0}));
+felt.rotation.x=-Math.PI/2; felt.receiveShadow=true; scene.add(felt);
+
+const lamp=new THREE.SpotLight(0xffdca0, 420, 30, .5, .7, 1.5);
+lamp.position.set(2,11,1); lamp.castShadow=true; lamp.shadow.mapSize.set(2048,2048); lamp.shadow.radius=4; lamp.shadow.bias=-.0004;
+scene.add(lamp, lamp.target);
+scene.add(new THREE.HemisphereLight(0xfff0d0,0x052117,.14));
+
+// gold table markings painted on the felt: six numbered bets + a curved pass line
+const DW=2048, DH=1100, dc=document.createElement('canvas'); dc.width=DW; dc.height=DH; const dg=dc.getContext('2d');
+const BOX={y:40,h:300,x0:110,w:(DW-220)/6};
+function drawDecal(hit){
+  dg.clearRect(0,0,DW,DH);
+  dg.strokeStyle='#D4A73C'; dg.fillStyle='#D4A73C'; dg.lineWidth=7; dg.textAlign='center'; dg.textBaseline='middle';
+  for(let i=0;i<6;i++){
+    const x=BOX.x0+i*BOX.w;
+    if(hit===i+1){ dg.save(); dg.fillStyle='rgba(247,230,166,.32)'; dg.fillRect(x,BOX.y,BOX.w,BOX.h); dg.restore(); }
+    dg.strokeRect(x,BOX.y,BOX.w,BOX.h);
+    dg.save(); if(hit===i+1){ dg.fillStyle='#FFF3C4'; dg.shadowColor='#F7E6A6'; dg.shadowBlur=40; }
+    dg.font='190px Limelight'; dg.fillText(String(i+1),x+BOX.w/2,BOX.y+BOX.h/2+12); dg.restore();
+  }
+  dg.font='44px "JetBrains Mono"'; dg.fillText('· SIX BETS · ONE THROW · NO RE-ROLLS ·',DW/2,BOX.y+BOX.h+60);
+  // curved pass line band
+  const arc=(r)=>{ dg.beginPath(); dg.ellipse(DW/2,-520,r*1.55,r,0,Math.PI*.18,Math.PI*.82); dg.stroke(); };
+  dg.lineWidth=6; arc(1500); arc(1600);
+  const t='PASS  LINE', R0=1550; dg.font='86px Limelight';
+  for(let i=0;i<t.length;i++){
+    const a=Math.PI/2-(i-(t.length-1)/2)*.045, x=DW/2+Math.cos(a)*R0*1.55, y=-520+Math.sin(a)*R0;
+    const tan=Math.atan2(-Math.cos(a)*R0, Math.sin(a)*R0*1.55);
+    dg.save(); dg.translate(x,y); dg.rotate(tan); dg.fillText(t[i],0,0); dg.restore();
+  }
+  decalTex.needsUpdate=true; wake();
+}
+const decalTex=new THREE.CanvasTexture(dc); decalTex.colorSpace=THREE.SRGBColorSpace; decalTex.anisotropy=8;
+const decal=new THREE.Mesh(new THREE.PlaneGeometry(9.2,9.2*DH/DW),new THREE.MeshStandardMaterial({map:decalTex,transparent:true,roughness:.55,metalness:.35,polygonOffset:true,polygonOffsetFactor:-2}));
+decal.rotation.x=-Math.PI/2; decal.receiveShadow=true; scene.add(decal);
+document.fonts.load('190px Limelight').then(()=>document.fonts.load('44px "JetBrains Mono"')).then(()=>drawDecal(0));
+
+// die faces: canvas with pips, plus a bump map for sunken pips
+const PIPS={1:[[.5,.5]],2:[[.27,.27],[.73,.73]],3:[[.25,.25],[.5,.5],[.75,.75]],4:[[.27,.27],[.73,.27],[.27,.73],[.73,.73]],5:[[.26,.26],[.74,.26],[.5,.5],[.26,.74],[.74,.74]],6:[[.27,.24],[.73,.24],[.27,.5],[.73,.5],[.27,.76],[.73,.76]]};
+function faceTex(n,bump,base='#B3202A',pip='#F6F0E2'){
+  const s=256,c=document.createElement('canvas'); c.width=c.height=s; const g=c.getContext('2d');
+  g.fillStyle=bump?'#fff':base; g.fillRect(0,0,s,s);
+  for(const [x,y] of PIPS[n]){
+    if(bump){ const r=g.createRadialGradient(x*s,y*s,0,x*s,y*s,25); r.addColorStop(0,'#000'); r.addColorStop(.8,'#333'); r.addColorStop(1,'#fff'); g.fillStyle=r; }
+    else g.fillStyle=pip;
+    g.beginPath(); g.arc(x*s,y*s,23,0,Math.PI*2); g.fill();
+  }
+  const t=new THREE.CanvasTexture(c); if(!bump) t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=8; return t;
+}
+// BoxGeometry face order: +x,-x,+y,-y,+z,-z  → 3,4,1,6,2,5 (opposites sum to 7)
+const ORDER=[3,4,1,6,2,5];
+const NORMALS={1:[0,1,0],6:[0,-1,0],3:[1,0,0],4:[-1,0,0],2:[0,0,1],5:[0,0,-1]};
+const mats=ORDER.map(n=>new THREE.MeshPhysicalMaterial({map:faceTex(n,false),bumpMap:faceTex(n,true),bumpScale:2.5,roughness:.18,clearcoat:1,clearcoatRoughness:.08,transmission:.25,thickness:1.2,ior:1.5,sheen:.2}));
+function roundedBox(r=.12,seg=12){
+  const g=new THREE.BoxGeometry(1,1,1,seg,seg,seg), p=g.attributes.position, v=new THREE.Vector3(), inner=.5-r;
+  for(let i=0;i<p.count;i++){
+    v.fromBufferAttribute(p,i);
+    const c=new THREE.Vector3(THREE.MathUtils.clamp(v.x,-inner,inner),THREE.MathUtils.clamp(v.y,-inner,inner),THREE.MathUtils.clamp(v.z,-inner,inner));
+    v.sub(c).normalize().multiplyScalar(r).add(c); p.setXYZ(i,v.x,v.y,v.z);
+  }
+  g.computeVertexNormals(); return g;
+}
+const SIZE=1.15, HALF=SIZE/2;
+const ivoryMats=ORDER.map(n=>new THREE.MeshPhysicalMaterial({map:faceTex(n,false,'#F1E9D6','#B3202A'),bumpMap:faceTex(n,true),bumpScale:2.5,roughness:.3,clearcoat:.8,clearcoatRoughness:.15}));
+const dieGeo=roundedBox();
+// dice[0] is crimson and decides; dice[1] is ivory company
+const dice=[{mesh:new THREE.Mesh(dieGeo,mats),key:true},{mesh:new THREE.Mesh(dieGeo,ivoryMats)}];
+dice.forEach(d=>{ d.mesh.scale.setScalar(SIZE); d.mesh.castShadow=true; scene.add(d.mesh); });
+
+/* ---------- physics: cannon-es ---------- */
+const world=new CANNON.World({gravity:new CANNON.Vec3(0,-32,0), allowSleep:true});
+const feltMat=new CANNON.Material('felt'), railMat=new CANNON.Material('rail'), dieMat=new CANNON.Material('die');
+world.addContactMaterial(new CANNON.ContactMaterial(feltMat,dieMat,{friction:.32,restitution:.3}));
+world.addContactMaterial(new CANNON.ContactMaterial(railMat,dieMat,{friction:.1,restitution:.55}));
+world.addContactMaterial(new CANNON.ContactMaterial(dieMat,dieMat,{friction:.12,restitution:.5}));
+const ground=new CANNON.Body({mass:0,material:feltMat,shape:new CANNON.Plane()});
+ground.quaternion.setFromEuler(-Math.PI/2,0,0); world.addBody(ground);
+// invisible rail cushions: planes facing inward, placed by layout()
+const walls=[Math.PI/2,-Math.PI/2,0,Math.PI].map(yaw=>{
+  const b=new CANNON.Body({mass:0,material:railMat,shape:new CANNON.Plane()});
+  b.quaternion.setFromEuler(0,yaw,0); world.addBody(b); return b;
+});
+dice.forEach(d=>{
+  d.body=new CANNON.Body({mass:1,material:dieMat,shape:new CANNON.Box(new CANNON.Vec3(HALF,HALF,HALF)),
+    linearDamping:.06,angularDamping:.1,sleepSpeedLimit:.15,sleepTimeLimit:.3});
+  d.body.addEventListener('collide',e=>clack(d,e));
+  world.addBody(d.body);
+});
+
+let rest=new THREE.Vector3(2.4,0,0);
+const arena={cx:0,cz:0,hx:2,hz:1.5};
+function layout(){
+  const w=canvas.clientWidth,h=canvas.clientHeight; renderer.setSize(w,h,false);
+  camera.aspect=w/h;
+  const mobile=w<820;
+  rest.set(mobile?0:3.1, 0, mobile?-3.3:.2);
+  Object.assign(arena, mobile?{cx:0,cz:-3.1,hx:1.55,hz:1.3}:{cx:4,cz:.2,hx:2.2,hz:1.6});
+  walls[0].position.set(arena.cx-arena.hx,0,0); walls[1].position.set(arena.cx+arena.hx,0,0);
+  walls[2].position.set(0,0,arena.cz-arena.hz); walls[3].position.set(0,0,arena.cz+arena.hz);
+  camera.fov=mobile?48:34;
+  camera.position.set(mobile?0:.8, 9, mobile?7.5:8.5);
+  camera.lookAt(mobile?0:.8,0,mobile?-1.2:0);
+  camera.updateProjectionMatrix();
+  lamp.position.set(arena.cx,11,arena.cz+1.5); lamp.target.position.set(arena.cx,0,arena.cz);
+  decal.scale.setScalar(mobile?.62:.86);
+  decal.position.set(rest.x+(mobile?0:1.1),.004,rest.z-(mobile?.55:.9));
+}
+layout(); addEventListener('resize',()=>{layout(); wake();});
+
+const rnd=()=>crypto.getRandomValues(new Uint32Array(1))[0]/2**32;
+const UP=new CANNON.Vec3(0,1,0), tmp=new CANNON.Vec3();
+function topFace(body){
+  let best=null, dot=-2;
+  for(const n of [1,2,3,4,5,6]){
+    body.quaternion.vmult(new CANNON.Vec3(...NORMALS[n]),tmp);
+    if(tmp.y>dot){ dot=tmp.y; best=n; }
+  }
+  return {n:best,dot};
+}
+function sync(){ dice.forEach(d=>{ d.mesh.position.copy(d.body.position); d.mesh.quaternion.copy(d.body.quaternion); }); }
+function place(d,x,z,n){
+  const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(...NORMALS[n]),new THREE.Vector3(0,1,0))
+    .premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),(rnd()-.5)*1.4));
+  d.body.position.set(x,HALF,z); d.body.quaternion.set(q.x,q.y,q.z,q.w);
+  d.body.velocity.setZero(); d.body.angularVelocity.setZero();
+}
+
+let sim=null, lastT=0;
+function handPos(i){
+  const mobile=innerWidth<820;
+  return [arena.cx-arena.hx+HALF+.25+i*.35, 1.7+i*.95, arena.cz+arena.hz-HALF-.25-i*(mobile?.6:1.1)];
+}
+// power: 1 for a tap, up to ~1.6 after a long shake
+function roll(power=1){
+  unlockAudio();
+  // on phones the button sits below the table: bring the dice back into view
+  if(scrollY>40) scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+  document.getElementById('readout').classList.remove('on');
+  document.querySelectorAll('.box').forEach(b=>b.classList.remove('hit'));
+  drawDecal(0);
+  if(reduce){ // no tumble: the dice simply appear on the felt
+    const a=1+Math.floor(rnd()*6), b=1+Math.floor(rnd()*6);
+    place(dice[0],arena.cx-.7,arena.cz,a); place(dice[1],arena.cx+.8,arena.cz-.3,b);
+    sync(); land(a,b); wake(); return;
+  }
+  const mobile=innerWidth<820, k=.75+.25*power;
+  dice.forEach((d,i)=>{
+    const b=d.body;
+    if(!hold) b.position.set(...handPos(i)), b.quaternion.setFromEuler(rnd()*6.3,rnd()*6.3,rnd()*6.3);
+    b.velocity.set(((mobile?6:10)+rnd()*4-i*1.5)*k, 1+rnd()*2, (-(mobile?3:4)-rnd()*3+i*1.2)*k);
+    b.angularVelocity.set((rnd()-.5)*30*k,(rnd()-.5)*20*k,(rnd()-.5)*30*k);
+    b.wakeUp();
+  });
+  sim={simT:0,nudgeAt:0,nudges:0}; lastT=0; wake();
+}
+function land(a,b){
+  document.getElementById('rnum').textContent=a;
+  document.getElementById('rwhat').textContent=DIRECTIONS[a];
+  document.getElementById('rpair').textContent=`Crimson ${a} · Ivory ${b} — crimson decides`;
+  document.getElementById('readout').classList.add('on');
+  document.querySelector(`.box[data-n="${a}"]`).classList.add('hit');
+  drawDecal(a);
+  bell();
+}
+
+/* ---------- hold to shake: the dice rattle in your hand ---------- */
+let hold=null;
+const jq=new THREE.Quaternion(), je=new THREE.Euler();
+function shakeFrame(now){
+  const t=(now-hold.t0)/1000, amp=Math.min(1,t*1.6);
+  dice.forEach((d,i)=>{
+    const [x,y,z]=handPos(i), b=d.body;
+    b.position.set(x+Math.sin(now*.045+i*2)*.18*amp, y+Math.abs(Math.sin(now*.03+i))*.35*amp, z+Math.cos(now*.05+i*3)*.14*amp);
+    je.set(now*.011*(i?-1:1), now*.017, now*.007*(i?1:-1)); jq.setFromEuler(je);
+    b.quaternion.set(jq.x,jq.y,jq.z,jq.w); b.velocity.setZero(); b.angularVelocity.setZero();
+  });
+  sync();
+}
+function rattle(){ // dice knocking together inside a closed hand
+  if(!hold) return;
+  playHit('die', .18+rnd()*.3, 2300+rnd()*1200);
+  if(rnd()<.35) playHit('felt', .12+rnd()*.12, 700+rnd()*300);
+  hold.timer=setTimeout(rattle, 45+rnd()*90);
+}
+const throwBtn=document.getElementById('throw');
+throwBtn.addEventListener('pointerdown',e=>{
+  if(reduce||e.button>0) return;
+  unlockAudio(); sim=null; hold={t0:performance.now()};
+  throwBtn.setPointerCapture(e.pointerId);
+  throwBtn.classList.add('shaking'); throwBtn.textContent='Release to throw';
+  document.getElementById('readout').classList.remove('on');
+  document.querySelectorAll('.box').forEach(b=>b.classList.remove('hit')); drawDecal(0);
+  if(scrollY>40) scrollTo({top:0,behavior:'smooth'});
+  rattle(); wake();
+});
+function release(){
+  if(!hold) return;
+  const held=(performance.now()-hold.t0)/1000; clearTimeout(hold.timer);
+  throwBtn.classList.remove('shaking'); throwBtn.textContent='Throw the dice';
+  roll(Math.min(1.6,.85+held*.5)); hold=null;
+  document.getElementById('hint').style.opacity=held>.4?0:'';
+}
+throwBtn.addEventListener('pointerup',release);
+throwBtn.addEventListener('pointercancel',release);
+throwBtn.addEventListener('lostpointercapture',release);
+throwBtn.addEventListener('click',e=>{ if(reduce||e.detail===0) roll(); }); // keyboard / reduced motion
+
+function frame(now){
+  if(hold) shakeFrame(now);
+  else if(sim){
+    const dt=lastT?Math.min(.1,(now-lastT)/1000):1/60; lastT=now;
+    world.step(1/120,dt,12); sim.simT+=dt; sync();
+    const asleep=dice.every(d=>d.body.sleepState===CANNON.Body.SLEEPING);
+    // timeout counts simulated seconds, so slow devices still let the dice settle
+    if(asleep || sim.simT-sim.nudgeAt>6){
+      const faces=dice.map(d=>topFace(d.body));
+      const cocked=faces.findIndex(f=>f.dot<.95);
+      if(cocked>=0 && sim.nudges<4){ // a cocked die gets a nudge, as at a real table
+        const b=dice[cocked].body; b.wakeUp();
+        b.velocity.set((rnd()-.5)*2,4,(rnd()-.5)*2); b.angularVelocity.set((rnd()-.5)*8,0,(rnd()-.5)*8);
+        sim.nudges++; sim.nudgeAt=sim.simT;
+      } else { sim=null; land(faces[0].n,faces[1].n); }
+    }
+  }
+  renderer.render(scene,camera);
+  // render on demand: keep looping only while the dice are moving
+  if(sim||hold) requestAnimationFrame(frame); else looping=false;
+}
+let looping=false;
+function wake(){ if(!looping){ looping=true; requestAnimationFrame(frame); } }
+
+/* ---------- sound: synthesized clacks, no audio files ---------- */
+// Browsers keep audio locked until the first click or tap, so the automatic opening throw is silent.
+let actx=null, soundOn=true, noise=null, master=null;
+const soundBtn=document.getElementById('sound');
+function soundUI(){
+  const live=actx&&actx.state==='running';
+  soundBtn.classList.toggle('locked',!live&&soundOn);
+  soundBtn.classList.toggle('live',!!live&&soundOn);
+  soundBtn.setAttribute('aria-pressed',soundOn);
+  soundBtn.querySelector('.lbl').textContent=!soundOn?'Sound off':live?'Sound on':'Tap for sound';
+}
+function unlockAudio(){
+  if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return; }
+    noise=actx.createBuffer(1,actx.sampleRate*.2,actx.sampleRate);
+    const ch=noise.getChannelData(0); for(let i=0;i<ch.length;i++) ch[i]=Math.random()*2-1;
+    // a touch of room: short feedback delay, like a quiet casino floor
+    master=actx.createGain(); const dl=actx.createDelay(), fb=actx.createGain(), wet=actx.createGain(), lp=actx.createBiquadFilter();
+    dl.delayTime.value=.045; fb.gain.value=.28; wet.gain.value=.22; lp.type='lowpass'; lp.frequency.value=2600;
+    master.connect(actx.destination); master.connect(dl); dl.connect(lp).connect(fb).connect(dl); lp.connect(wet).connect(actx.destination);
+    actx.onstatechange=soundUI;
+  }
+  if(actx.state==='suspended') actx.resume().then(soundUI,()=>{});
+  soundUI();
+}
+addEventListener('pointerdown',unlockAudio,{once:true});
+addEventListener('keydown',unlockAudio,{once:true});
+function playHit(kind,vol,freq){
+  if(!soundOn||!actx||actx.state!=='running') return;
+  const t=actx.currentTime;
+  const src=actx.createBufferSource(); src.buffer=noise;
+  const bp=actx.createBiquadFilter(); bp.type='bandpass';
+  bp.frequency.value=freq||{die:2900,felt:900,rail:1500}[kind]*(.85+rnd()*.3); bp.Q.value={die:7,felt:1.4,rail:4}[kind];
+  const g=actx.createGain(), len={die:.05,felt:.09,rail:.07}[kind];
+  g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.0008,t+len);
+  src.connect(bp).connect(g).connect(master); src.start(t,rnd()*.1,len+.02);
+  if(kind!=='die'){ // body of the hit: a short low thump
+    const o=actx.createOscillator(), og=actx.createGain();
+    o.frequency.setValueAtTime(kind==='felt'?150:260,t); o.frequency.exponentialRampToValueAtTime(60,t+.08);
+    og.gain.setValueAtTime(vol*.6,t); og.gain.exponentialRampToValueAtTime(.0008,t+.1);
+    o.connect(og).connect(master); o.start(t); o.stop(t+.12);
+  }
+}
+function clack(d,e){
+  if(hold) return;
+  const other=e.body, dieHit=other.mass>0;
+  if(dieHit && !d.key) return; // a die–die hit reaches both bodies; play it once
+  const v=Math.abs(e.contact.getImpactVelocityAlongNormal()); if(v<.5) return;
+  if(!actx) return;
+  const t=actx.currentTime; if(t-(d.lastHit||0)<.03) return; d.lastHit=t;
+  const kind=dieHit?'die':(other===ground?'felt':'rail');
+  playHit(kind, Math.min(1,v/11)*({die:.9,felt:.5,rail:.75}[kind]));
+}
+function bell(){ // the box lights up: a soft two-partial table bell
+  if(!soundOn||!actx||actx.state!=='running') return;
+  const t=actx.currentTime+.05;
+  [[1318.5,.09],[1975.5,.05],[2637,.025]].forEach(([f,v])=>{
+    const o=actx.createOscillator(), g=actx.createGain(); o.type='sine'; o.frequency.value=f;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+.008); g.gain.exponentialRampToValueAtTime(.0005,t+1.4);
+    o.connect(g).connect(master); o.start(t); o.stop(t+1.5);
+  });
+}
+// remember the state at press time: the window-level unlock runs before click fires
+let pressLive=null;
+soundBtn.addEventListener('pointerdown',()=>{ pressLive=!!(actx&&actx.state==='running'); });
+soundBtn.addEventListener('click',()=>{
+  // the first press only wakes the audio; after that it toggles
+  const wasLive=pressLive??!!(actx&&actx.state==='running'); pressLive=null;
+  if(wasLive) soundOn=!soundOn; else soundOn=true;
+  unlockAudio(); soundUI();
+});
+
+place(dice[0],arena.cx-.7,arena.cz,1); place(dice[1],arena.cx+.8,arena.cz-.3,5); sync();
+wake();
+setTimeout(()=>{ if(!hold) roll(); }, reduce?0:500);
+
+/* ---------- section markers: die faces ---------- */
+document.querySelectorAll('[data-die]').forEach(el=>{
+  const pips=PIPS[el.dataset.die].map(([x,y])=>`<circle cx="${x*100}" cy="${y*100}" r="9.5" fill="#F6F0E2"/>`).join('');
+  el.innerHTML=`<svg viewBox="0 0 100 100"><defs><linearGradient id="dg${el.dataset.die}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d23a3f"/><stop offset="1" stop-color="#7f1219"/></linearGradient></defs><rect x="2" y="2" width="96" height="96" rx="16" fill="url(#dg${el.dataset.die})"/><rect x="2" y="2" width="96" height="96" rx="16" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>${pips}</svg>`;
+});
+
+/* ---------- copy command ---------- */
+document.querySelectorAll('[data-copy]').forEach(el=>el.addEventListener('click',()=>{
+  navigator.clipboard?.writeText(el.dataset.copy); const o=el.textContent; el.textContent='copied — good luck'; setTimeout(()=>el.textContent=o,1400);
+}));
+
+/* ---------- scroll choreography ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }),{threshold:.2});
+document.querySelectorAll('.rv,#cards').forEach(el=>io.observe(el));
+const chips=[...document.querySelectorAll('.chip')];
+if(!reduce) addEventListener('scroll',()=>{ const y=scrollY; chips.forEach((c,i)=>c.style.setProperty('--spin',(y*.25*(i%2?-1:1)).toFixed(1))); },{passive:true});
+</script>
+</body>
+</html>

@@ -1,5 +1,9 @@
 # surprise-me
 
+[![surprise-me — the house rolls the dice](site/og.jpg)](https://zhoulinhua0-star.github.io/surprise-me/)
+
+**[Live site →](https://zhoulinhua0-star.github.io/surprise-me/)** — built by the skill itself: it rolled a 1 (Las Vegas, 1974).
+
 **Max visual acuity mode** — a cross-agent skill that makes coding agents (Claude Code, Codex, and anything else that reads `SKILL.md`) produce visual work meant to blow you away instead of serving the default style.
 
 Asking a model to "be creative" changes the wording, not the concept — it picks the same favourite every time. This skill swaps vibes for mechanics:
@@ -54,6 +58,7 @@ Restart the agent so it picks up the new skill. `git pull` updates it everywhere
 skills/surprise-me/
   SKILL.md               # the skill itself (canonical copy)
 SKILL.md -> skills/surprise-me/SKILL.md   # symlink for agents that read the repo root
+site/                    # the landing page (deployed to GitHub Pages by .github/workflows/pages.yml)
 ```
 
 ## Use
