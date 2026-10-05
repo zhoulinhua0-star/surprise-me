@@ -56,8 +56,7 @@ Restart the agent so it picks up the new skill. `git pull` updates it everywhere
   plugin.json            # plugin manifest
   marketplace.json       # lets this repo act as its own plugin marketplace
 skills/surprise-me/
-  SKILL.md               # the skill itself (canonical copy)
-SKILL.md -> skills/surprise-me/SKILL.md   # symlink for agents that read the repo root
+  SKILL.md               # the skill itself
 site/                    # the landing page (deployed to GitHub Pages by .github/workflows/pages.yml)
 ```
 
